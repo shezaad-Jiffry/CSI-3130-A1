@@ -1116,20 +1116,27 @@ typedef struct HashJoinState
 {
 	JoinState	js;				/* its first field is NodeTag */
 	List	   *hashclauses;	/* list of ExprState nodes */
-	HashJoinTable hj_HashTable;
+	HashJoinTable hj_HashTable; //csi 3130 
+	HashJoinTable hj_HashTableO; //csi 3130 
 	uint32		hj_CurHashValue;
 	int			hj_CurBucketNo;
 	HashJoinTuple hj_CurTuple;
 	List	   *hj_OuterHashKeys;		/* list of ExprState nodes */
 	List	   *hj_InnerHashKeys;		/* list of ExprState nodes */
 	List	   *hj_HashOperators;		/* list of operator OIDs */
-	TupleTableSlot *hj_OuterTupleSlot;
+	TupleTableSlot *hj_OuterTupleSlot;//csi 3130 
+	TupleTableSlot *hj_InnerTupleSlot; //csi 3130 
 	TupleTableSlot *hj_HashTupleSlot;
-	TupleTableSlot *hj_NullInnerTupleSlot;
-	TupleTableSlot *hj_FirstOuterTupleSlot;
-	bool		hj_NeedNewOuter;
-	bool		hj_MatchedOuter;
-	bool		hj_OuterNotEmpty;
+	TupleTableSlot *hj_NullInnerTupleSlot;//csi 3130 
+	TupleTableSlot *hj_NullOuterTupleSlot; //csi 3130 
+	TupleTableSlot *hj_FirstOuterTupleSlot;//csi 3130 
+	TupleTableSlot *hj_FirstInnerTupleSlot; //csi 3130 
+	bool		hj_NeedNewOuter; //csi 3130 
+	bool		hj_NeedNewInner;//csi 3130 
+	bool		hj_MatchedOuter; //csi 3130  
+	bool		hj_MatchedInner;//csi 3130 
+	bool		hj_OuterNotEmpty; //csi 3130 
+	bool		hj_InnerNotEmpty;//csi 3130 
 } HashJoinState;
 
 

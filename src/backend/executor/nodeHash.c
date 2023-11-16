@@ -868,7 +868,7 @@ ExecChooseHashTableSize(double ntuples, int tupwidth, bool useskew,
 		dbatch = ceil(inner_rel_bytes / (hash_table_bytes - bucket_bytes));
 		dbatch = Min(dbatch, max_pointers);
 		minbatch = (int) dbatch;
-		nbatch = pg_nextpower2_32(Max(2, minbatch));
+		nbatch = 1;
 	}
 
 	Assert(nbuckets > 0);
@@ -929,7 +929,7 @@ ExecHashIncreaseNumBatches(HashJoinTable hashtable)
 	HashMemoryChunk oldchunks;
 
 	/* do nothing if we've decided to shut off growth */
-	if (!hashtable->growEnabled)
+	if (hashtable->growEnabled)
 		return;
 
 	/* safety check to avoid overflow */

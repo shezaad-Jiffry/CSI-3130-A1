@@ -798,22 +798,40 @@ ExecHashGetBucketAndBatch(HashJoinTable hashtable,
  *		scan a hash bucket for matches to the current outer tuple
  *
  * The current outer tuple must be stored in econtext->ecxt_outertuple.
+ * csi3130
  */
-HeapTuple
+HashTuple
 ExecScanHashBucket(HashJoinState *hjstate,
 				   ExprContext *econtext)
 {
-	List	   *hjclauses = hjstate->hashclauses;
-	HashJoinTable hashtable = hjstate->hj_HashTable;
-	HashJoinTuple hashTuple = hjstate->hj_CurTuple;
-	uint32		hashvalue = hjstate->hj_CurHashValue;
+	
+	List	   *hjclauses ;
+	HashJoinTable hashtable ;
+	HashJoinTuple hashTuple ;
+	uint32		hashvalue ;
+	int			bucketNo;
+	TupleTableSlot tupleSlot;
 
+	if (hjstate->probing_inner) {
+		hashtable = hjstate->hj_HashTable;
+		hashTuple = hjstate->hj_CurTuple;
+		hashvalue = hjstate->hj_CurHashValueO;
+		bucketNo = hjstate->hj_CurBucketNo;
+		tupleSlot = hjstate->innerTupleSlot;
+	}
+	else {
+		hashtable = hjstate->hj_HashTableO;
+		hashTuple = hjstate->hj_CurTupleO;
+		hashvalue = hjstate->hj_CurHashValue;
+		bucketNo = hjstate->hj_CurBucketNoO;
+		tupleSlot = hjstate->outerTupleSlot;
+	}
 	/*
 	 * hj_CurTuple is NULL to start scanning a new bucket, or the address of
 	 * the last tuple returned from the current bucket.
 	 */
 	if (hashTuple == NULL)
-		hashTuple = hashtable->buckets[hjstate->hj_CurBucketNo];
+		hashTuple = hashtable->buckets[bucketNo];
 	else
 		hashTuple = hashTuple->next;
 
@@ -826,7 +844,7 @@ ExecScanHashBucket(HashJoinState *hjstate,
 
 			/* insert hashtable's tuple into exec slot so ExecQual sees it */
 			inntuple = ExecStoreTuple(heapTuple,
-									  hjstate->hj_HashTupleSlot,
+									  tupleSlot,
 									  InvalidBuffer,
 									  false);	/* do not pfree */
 			econtext->ecxt_innertuple = inntuple;
@@ -837,7 +855,7 @@ ExecScanHashBucket(HashJoinState *hjstate,
 			if (ExecQual(hjclauses, econtext, false))
 			{
 				hjstate->hj_CurTuple = hashTuple;
-				return heapTuple;
+				return hashTuple;
 			}
 		}
 

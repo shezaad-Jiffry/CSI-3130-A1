@@ -839,7 +839,7 @@ ExecScanHashBucket(HashJoinState *hjstate,
 	{
 		if (hashTuple->hashvalue == hashvalue)
 		{
-			HeapTuple	heapTuple = &hashTuple->htup;
+			//HeapTuple	heapTuple = &hashTuple->htup; csi3130
 			TupleTableSlot *inntuple;
 
 			/* insert hashtable's tuple into exec slot so ExecQual sees it */

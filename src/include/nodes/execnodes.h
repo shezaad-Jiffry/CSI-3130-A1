@@ -1119,8 +1119,11 @@ typedef struct HashJoinState
 	HashJoinTable hj_HashTable; //csi 3130 
 	HashJoinTable hj_HashTableO; //csi 3130 
 	uint32		hj_CurHashValue;
+	uint32		hj_CurHashValueO;//csi3130
 	int			hj_CurBucketNo;
+	int			hj_CurBucketNoO;//csi3130
 	HashJoinTuple hj_CurTuple;
+	HashJoinTuple hj_CurTupleO;//csi3130
 	List	   *hj_OuterHashKeys;		/* list of ExprState nodes */
 	List	   *hj_InnerHashKeys;		/* list of ExprState nodes */
 	List	   *hj_HashOperators;		/* list of operator OIDs */

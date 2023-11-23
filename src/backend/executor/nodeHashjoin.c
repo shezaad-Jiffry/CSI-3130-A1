@@ -512,23 +512,30 @@ ExecInitHashJoin(HashJoin *node, EState *estate)
 	 */
 	ExecAssignResultTypeFromTL(&hjstate->js.ps);
 	ExecAssignProjectionInfo(&hjstate->js.ps); //CSI3530 and CSI3130
-
+	ExecAssignProjectionInfo(&hjstate->jsO.ps);//csi3130
 	ExecSetSlotDescriptor(hjstate->hj_OuterTupleSlot,
 						  ExecGetResultType(outerPlanState(hjstate)),
 						  false); //CSI3530 and CSI3130
-
+	ExecSetSlotDescriptor(hjstate->hj_InnerTupleSlot,
+						  ExecGetResultType(innerPlanState(hjstate)),
+						  false);
 	/*
 	 * initialize hash-specific info
 	 */
 	hjstate->hj_HashTable = NULL;
+	hjstate->hj_HashTableO = NULL;
 	//CSI3530 and CSI3130...
 	hjstate->hj_FirstOuterTupleSlot = NULL;
+	hjstate->hj_FirstInnerTupleSlot = NULL;
 
 	//CSI3530 Plein d'initialisations a faire ici // CSI3130 Initialize here
 	hjstate->hj_CurHashValue = 0;
 	hjstate->hj_CurBucketNo = 0;
 	hjstate->hj_CurTuple = NULL;
 
+	hjstate->hj_CurHashValueO = 0;
+	hjstate->hj_CurBucketNoO = 0;
+	hjstate->hj_CurTupleO = NULL;
 
 	/*
 	 * Deconstruct the hash clauses into outer and inner argument values, so
@@ -602,6 +609,7 @@ ExecEndHashJoin(HashJoinState *node)
 	 */
 	ExecClearTuple(node->js.ps.ps_ResultTupleSlot);
 	ExecClearTuple(node->hj_OuterTupleSlot);
+	ExecClearTuple(node->hj_InnerTupleSlot);
 	// CSI3530 and CSI3130 ...
 	ExecClearTuple(node->hj_HashTupleSlot); 
 

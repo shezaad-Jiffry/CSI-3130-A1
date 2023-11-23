@@ -1115,6 +1115,7 @@ typedef struct HashJoinTableData *HashJoinTable;
 typedef struct HashJoinState
 {
 	JoinState	js;				/* its first field is NodeTag */
+	JoinState	jsO;
 	List	   *hashclauses;	/* list of ExprState nodes */
 	HashJoinTable hj_HashTable; //csi 3130 
 	HashJoinTable hj_HashTableO; //csi 3130 
